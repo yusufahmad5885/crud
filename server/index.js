@@ -1,4 +1,5 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
 
 const mysql = require("mysql");
@@ -6,33 +7,17 @@ const mysql = require("mysql");
 const db = mysql.createConnection({
   user: "root",
   host: "localhost",
-  database: "fakedatabase",
+  database: "cruddatabase",
 });
 
-app.get("/select", (req, res) => {
-  db.query("SELECT * FROM countries", (err, result) => {
-    if (err) {
-      console.log(err);
-    }
+app.use(bodyParser.urlencoded({ extended: True }));
 
-    res.send(result);
-  });
-});
-
-app.post("/insert", (req, res) => {
-  const countryName = "Bulgaria";
-  const population = 123;
-  db.query(
-    "INSERT INTO countries (countryName, population) VALUES (?, ?)",
-    [countryName, population],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-
-      res.send(result);
-    }
-  );
+app.post("/api/insert", (req, res) => {
+  const movieName = req.body.movieName;
+  const movieReview = req.body.movieReview;
+  const sqlInsert =
+    "INSERT INTO movie_reviews (movieName, movieReview) VALUES (?,?)";
+  db.query(sqlInsert, [movieName, movieReview], (err, res) => {});
 });
 
 app.listen(3001, () => {
